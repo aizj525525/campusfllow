@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>CampusFlow · 校园学习生活</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+<!-- 启动页 -->
+<div id="splash" class="splash">
+  <div class="splash-logo">🎓</div>
+  <div class="splash-title">CampusFlow</div>
+  <div class="splash-sub">让校园生活井井有条</div>
+</div>
+
+<!-- 登录界面（超过 24 小时未验证或首次使用时显示） -->
+<div id="login-screen" class="login-screen" style="display:none">
+  <div class="login-card">
+    <div class="login-logo">🎓</div>
+    <div class="login-title">CampusFlow</div>
+    <div class="login-sub" id="login-welcome">欢迎回来，请登录你的账户</div>
+    <label class="field"><span class="field-label">用户名</span>
+      <input id="login-name" class="input" placeholder="中英文昵称，1-12 个字符" autocomplete="off"></label>
+    <label class="field"><span class="field-label">密码</span>
+      <input id="login-pass" type="password" class="input" placeholder="请输入密码"></label>
+    <label class="field" id="login-pass2-field"><span class="field-label">确认密码（新用户注册时填写）</span>
+      <input id="login-pass2" type="password" class="input" placeholder="再次输入密码"></label>
+    <button id="login-btn" class="btn primary login-btn">进入 CampusFlow</button>
+    <div class="login-hint" id="login-hint">新用户名将自动创建账户 · 每个账户拥有独立数据空间</div>
+  </div>
+</div>
+
+<div id="app">
+
+  <!-- 首页看板 -->
+  <section class="page active" id="page-home">
+    <div id="home-content"></div>
+  </section>
+
+  <!-- 课程表 -->
+  <section class="page" id="page-schedule">
+    <div class="card schedule-card">
+      <div class="week-bar">
+        <div class="week-nav">
+          <button class="icon-btn" id="week-prev" aria-label="上一周">‹</button>
+          <div class="week-label" id="schedule-week"></div>
+          <button class="icon-btn" id="week-next" aria-label="下一周">›</button>
+        </div>
+        <button class="mini-btn ghost" id="import-course">📷 导入课表</button>
+      </div>
+      <div class="grid" id="schedule-grid"></div>
+    </div>
+  </section>
+
+  <!-- 任务中心 -->
+  <section class="page" id="page-tasks">
+    <div class="chips scroll" id="task-filters"></div>
+    <div id="task-list"></div>
+  </section>
+
+  <!-- 竞赛专区 -->
+  <section class="page" id="page-contest">
+    <div class="page-head" id="contest-page-head">
+      <div class="page-title">竞赛专区</div>
+      <div class="sub">7 大类 · 21 项高价值赛事 · 点开备赛</div>
+    </div>
+    <div id="contest-list"></div>
+  </section>
+
+  <!-- 大学四年规划 -->
+  <section class="page" id="page-plan">
+    <div class="page-head" id="plan-page-head">
+      <div class="page-title">大学四年规划</div>
+      <div class="sub">分阶段目标与行动指南</div>
+    </div>
+    <div id="plan-list"></div>
+  </section>
+
+  <!-- 个人数据面板 -->
+  <section class="page" id="page-profile">
+    <div id="profile-content"></div>
+  </section>
+
+</div>
+
+<!-- 悬浮添加按钮 -->
+<button id="fab" class="fab" aria-label="添加任务">+</button>
+
+<!-- 底部 Tab -->
+<nav class="tabbar">
+  <div class="tab active" data-tab="home"><span class="tab-icon">🏠</span><span class="tab-text">首页</span></div>
+  <div class="tab" data-tab="schedule"><span class="tab-icon">📅</span><span class="tab-text">课表</span></div>
+  <div class="tab" data-tab="tasks"><span class="tab-icon">✅</span><span class="tab-text">任务</span></div>
+  <div class="tab" data-tab="contest"><span class="tab-icon">🏆</span><span class="tab-text">竞赛</span></div>
+  <div class="tab" data-tab="plan"><span class="tab-icon">🧭</span><span class="tab-text">规划</span></div>
+  <div class="tab" data-tab="profile"><span class="tab-icon">👤</span><span class="tab-text">我的</span></div>
+</nav>
+
+<!-- 添加任务页（覆盖层） -->
+<div class="overlay" id="overlay-addtask">
+  <div class="ov-header">
+    <button class="icon-btn" id="addtask-back" aria-label="返回">←</button>
+    <div class="ov-title">添加任务</div>
+    <div class="ov-holder"></div>
+  </div>
+  <div class="form">
+    <label class="field">
+      <span class="field-label">任务标题 *</span>
+      <input id="at-title" class="input" type="text" placeholder="例如：完成高数第三章习题">
+    </label>
+    <div class="field">
+      <span class="field-label">分类</span>
+      <div class="chips" id="at-category"></div>
+    </div>
+    <label class="field">
+      <span class="field-label">关联课程</span>
+      <select id="at-course" class="input"></select>
+    </label>
+    <div class="field">
+      <span class="field-label">截止时间</span>
+      <div class="row">
+        <input id="at-date" class="input" type="date">
+        <input id="at-time" class="input" type="time">
+      </div>
+    </div>
+    <div class="field">
+      <span class="field-label">优先级</span>
+      <div class="chips" id="at-priority"></div>
+    </div>
+    <div class="field">
+      <span class="field-label">预计时长</span>
+      <div class="chips" id="at-estimate"></div>
+      <div class="custom-dur" id="at-custom-wrap" style="display:none">
+        <input id="at-custom-min" class="input" type="number" min="5" max="600" step="5" placeholder="自定义分钟">
+        <span class="sub">分钟（5–600）</span>
+      </div>
+    </div>
+    <label class="field">
+      <span class="field-label">备注</span>
+      <textarea id="at-note" class="input" rows="3" placeholder="补充说明（可选）"></textarea>
+    </label>
+  </div>
+  <div class="ov-footer">
+    <button class="btn primary" id="addtask-save">保存任务</button>
+  </div>
+</div>
+
+<!-- 成长日历（覆盖层） -->
+<div class="overlay" id="overlay-calendar">
+  <div class="ov-header">
+    <button class="icon-btn" id="cal-back" aria-label="返回">←</button>
+    <div class="ov-title">成长日历</div>
+    <div class="ov-holder"></div>
+  </div>
+  <div class="cal-wrap">
+    <div class="cal-year">
+      <button class="icon-btn" id="cal-prev" aria-label="上一年">‹</button>
+      <div class="cal-year-label" id="cal-year-label"></div>
+      <button class="icon-btn" id="cal-next" aria-label="下一年">›</button>
+    </div>
+    <div class="cal-legend">
+      <span>少</span><i class="cl0"></i><i class="cl1"></i><i class="cl2"></i><i class="cl3"></i><span>多</span>
+    </div>
+    <div id="cal-months" class="cal-months"></div>
+    <div class="sub" style="text-align:center;margin-top:12px">点击有颜色的日期，查看当天任务与完成情况</div>
+  </div>
+</div>
+
+<!-- 通用弹窗 -->
+<div class="modal" id="modal">
+  <div class="sheet" id="modal-sheet"></div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
+<script src="./js/app.js"></script>
+</body>
+</html>
